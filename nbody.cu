@@ -91,7 +91,8 @@ void printSystem(FILE* handle){
 
 int main(int argc, char **argv)
 {
-	clock_t t0=clock();
+	struct timespec wall0, wall1;
+	clock_gettime(CLOCK_MONOTONIC, &wall0);
 	int t_now;
 	//srand(time(NULL));
 	srand(1234);
@@ -106,12 +107,16 @@ int main(int argc, char **argv)
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
 		compute();
 	}
+	/* Default stream: this memcpy waits until all queued GPU work has finished. */
 	copyDeviceToHost();
-	clock_t t1=clock()-t0;
+	clock_gettime(CLOCK_MONOTONIC, &wall1);
+	double elapsed =
+		(wall1.tv_sec - wall0.tv_sec) +
+		(wall1.tv_nsec - wall0.tv_nsec) / 1.0e9;
 #ifdef DEBUG
 	printSystem(stdout);
 #endif
-	printf("This took a total time of %f seconds\n",(double)t1/CLOCKS_PER_SEC);
+	printf("This took a total time of %f seconds\n", elapsed);
 
 	freeDeviceMemory();
 	freeHostMemory();
