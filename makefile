@@ -1,7 +1,7 @@
 NVCC=nvcc
 # Add -DDEBUG to verify correctness (prints initial and final system state).
 # Remove it for timing runs so I/O does not dominate the measurement.
-FLAGS=-O2
+FLAGS=-O2 -DDEBUG
 LIBS=
 ALWAYS_REBUILD=makefile
 
